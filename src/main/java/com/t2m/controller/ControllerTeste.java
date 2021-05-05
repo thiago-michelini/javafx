@@ -1,9 +1,6 @@
 package com.t2m.controller;
 
-import com.t2m.model.Consulta;
-import com.t2m.model.Produto;
-import com.t2m.model.ProdutoTableView;
-import com.t2m.model.ProdutoResponse;
+import com.t2m.model.*;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -16,9 +13,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -54,16 +52,58 @@ public class ControllerTeste implements Initializable {
     @FXML
     private Label lbData;
 
+    @FXML
+    private TableView<TransacaoTableView> tvTransacao;
+
+    @FXML
+    private TableColumn<TransacaoTableView, String> colTransProduto;
+
+    @FXML
+    private TableColumn<TransacaoTableView, String> colTransFornecedor;
+
+    @FXML
+    private TableColumn<TransacaoTableView, String> colTransIdTransacao;
+
+    @FXML
+    private TableColumn<TransacaoTableView, String> colTransStatus;
+
+    @FXML
+    private TableColumn<TransacaoTableView, String> colTransValor;
+
+    @FXML
+    private TableColumn<TransacaoTableView, String> colTransDtHr;
+
+    @FXML
+    private TableColumn<TransacaoTableView, Long> colTransNsuFornecedor;
+
     private Client cInstance = ClientBuilder.newClient();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cbConsulta.setItems(getOpcoesConsulta());
+        exibirPrimeiraEsconderSegundaTableView(tvProduto, tvTransacao);
+
+        colTransProduto.setCellValueFactory(new PropertyValueFactory<>("produto"));
+        colTransFornecedor.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
+        colTransIdTransacao.setCellValueFactory(new PropertyValueFactory<>("idTransacao"));
+        colTransValor.setCellValueFactory(new PropertyValueFactory<>("valor"));
+        colTransDtHr.setCellValueFactory(new PropertyValueFactory<>("dataHora"));
+        colTransNsuFornecedor.setCellValueFactory(new PropertyValueFactory<>("nsuFornecedor"));
+        colTransStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        desenharLinhasTableTransacao(colTransStatus);
+
         colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colFornecedor.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
         colTipoNegocio.setCellValueFactory(new PropertyValueFactory<>("tipoNegocio"));
         colNegocio.setCellValueFactory(new PropertyValueFactory<>("negocio"));
-        colNegocio.setCellFactory(p -> {
+        desenharColunaNegocioTableProduto(colNegocio);
+
+        lbData.setVisible(false);
+        dpData.setVisible(false);
+    }
+
+    private void desenharColunaNegocioTableProduto(TableColumn<ProdutoTableView, String> tc) {
+        tc.setCellFactory(p -> {
             return new TableCell<ProdutoTableView, String>() {
                 @Override
                 protected void updateItem(String s, boolean empty) {
@@ -94,8 +134,39 @@ public class ControllerTeste implements Initializable {
                 }
             };
         });
-        lbData.setVisible(false);
-        dpData.setVisible(false);
+    }
+
+    private void desenharLinhasTableTransacao(TableColumn<TransacaoTableView, String> tc) {
+        tc.setCellFactory(p -> {
+            return new TableCell<TransacaoTableView, String>() {
+                @Override
+                protected void updateItem(String status, boolean empty) {
+                    super.updateItem(status, empty);
+                    TableRow<TransacaoTableView> row = getTableRow();
+                    if (null == status || empty) {
+                        setText(null);
+                        row.setStyle(null);
+                    } else {
+                        setText(status);
+                        if ("efetivada".equalsIgnoreCase(status))
+                            row.setStyle("-fx-background-color: green;");
+                        else if ("negada".equalsIgnoreCase(status))
+                            row.setStyle("-fx-background-color: red;");
+                        else if ("autorizada".equalsIgnoreCase(status))
+                            row.setStyle("-fx-background-color: yellow;");
+                        else if ("cancelada".equalsIgnoreCase(status))
+                            row.setStyle("-fx-background-color: orange;");
+                        else
+                            row.setStyle(null);
+                    }
+                }
+            };
+        });
+    }
+
+    private void exibirPrimeiraEsconderSegundaTableView(TableView<?> primeiraTV, TableView<?> segundaTV) {
+        primeiraTV.setVisible(true);
+        segundaTV.setVisible(false);
     }
 
     @FXML
@@ -116,42 +187,87 @@ public class ControllerTeste implements Initializable {
         Consulta opCons = cbConsulta.getSelectionModel().getSelectedItem();
         if (null != opCons && opCons.getTipo() > 0) {
             if (opCons.getTipo() == 2 && "".equals(dpData.getEditor().getText())) {
-                new Alert(Alert.AlertType.INFORMATION, "A data deve ser informada").show();
+                Alert a = new Alert(Alert.AlertType.INFORMATION);
+                a.setHeaderText("A data deve ser informada!");
+                a.show();
                 return;
             }
-            String codigo = opCons.getTipo() == 1 ? "\"81AA1C20B1688E4C7424C4E000334DD4\"}" : "\"abc\"}";
-            System.out.println(opCons.getNome());
-            Response resp = null;
+            if (opCons.getTipo() == 2 && !validateDateFromDatePicker(dpData)) {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setHeaderText("A data informada é inválida!");
+                a.show();
+                return;
+            }
+
             try {
                 String auth = Base64.getEncoder().encodeToString("75862116000139:75862116000139".getBytes());
-                resp = cInstance.target("https://services-uat.redetendencia.com.br/tnd-soa-comercial/tnd-ws-app")
-                        .path("comercial/auth/produto-fornecedor/listar/v/20190925")
-                        .request()
-                        .header("Authorization", "Basic " + auth)
-                        .post(Entity.entity("{\"codigo\":"+codigo, MediaType.APPLICATION_JSON));
-                System.err.println("status-->"+resp.getStatusInfo().getStatusCode());
-                if (resp.getStatusInfo().getStatusCode() == 200) {
-                    ProdutoResponse r = resp.readEntity(ProdutoResponse.class);
-                    List<ProdutoTableView> plv = r.getProdutosFornecedores().get(0).getProdutos().getProduto()
-                        .stream()
-                        .map(produto -> new ProdutoTableView(
-                            produto.getNome(),
-                            produto.getFornecedor().getNome(),
-                            produto.getNegocio().getTipo(),
-                            produto.getNegocio().getNome()))
-                        .collect(Collectors.toList());
-
-                    tvProduto.setItems(FXCollections.observableArrayList(plv));
+                if (opCons.getTipo() == 1) {
+                    ObservableList<ProdutoTableView> produtoTV = invocarProdutoAPI(auth);
+                    tvProduto.setItems(produtoTV);
+                    exibirPrimeiraEsconderSegundaTableView(tvProduto, tvTransacao);
                 } else {
-                    String r = resp.readEntity(String.class);
-                    System.out.println(r);
-                    tvProduto.setItems(null);
-                    new Alert(Alert.AlertType.ERROR, r).show();
+                    ObservableList<TransacaoTableView> transacaoTV = invocarTransacaoAPI(auth);
+                    tvTransacao.setItems(transacaoTV);
+                    exibirPrimeiraEsconderSegundaTableView(tvTransacao, tvProduto);
                 }
             } catch (Exception e) {
-                System.err.println("catch deu erro!!!"+resp.getStatusInfo().getStatusCode());
+                System.err.println("catch deu erro!!!");
                 e.printStackTrace();
             }
+        }
+    }
+
+    private ObservableList<TransacaoTableView> invocarTransacaoAPI(String auth) {
+        Response resp;
+        resp = cInstance.target("https://services-uat.redetendencia.com.br/tnd-soa-comercial/tnd-ws-app")
+            .path("comercial/auth/transacao/listar/v/20190925")
+            .request()
+            .header("Authorization", "Basic " + auth)
+            .post(Entity.entity("{\"codigo\":\"81AA1C20B1688E4C7424C4E000334DD4\",\"dataTransacao\":\""+dpData.getValue()+"\"}", MediaType.APPLICATION_JSON));
+        System.err.println("status-->"+resp.getStatusInfo().getStatusCode());
+        if (resp.getStatusInfo().getStatusCode() == 200) {
+            TransacaoResponse r = resp.readEntity(TransacaoResponse.class);
+            List<TransacaoTableView> ttv = r.getTransacoes()
+                .stream()
+                .map(TransacaoTableView::new)
+                .collect(Collectors.toList());
+            return FXCollections.observableArrayList(ttv);
+        }
+        String r = resp.readEntity(String.class);
+        System.out.println(r);
+        new Alert(Alert.AlertType.ERROR, r).show();
+        return null;
+    }
+
+    private ObservableList<ProdutoTableView> invocarProdutoAPI(String auth) {
+        Response resp;
+        resp = cInstance.target("https://services-uat.redetendencia.com.br/tnd-soa-comercial/tnd-ws-app")
+            .path("comercial/auth/produto-fornecedor/listar/v/20190925")
+            .request()
+            .header("Authorization", "Basic " + auth)
+            .post(Entity.entity("{\"codigo\":\"81AA1C20B1688E4C7424C4E000334DD4\"}", MediaType.APPLICATION_JSON));
+        System.err.println("status-->"+resp.getStatusInfo().getStatusCode());
+        if (resp.getStatusInfo().getStatusCode() == 200) {
+            ProdutoResponse r = resp.readEntity(ProdutoResponse.class);
+            List<ProdutoTableView> plv = r.getProdutosFornecedores().get(0).getProdutos().getProduto()
+                .stream()
+                .map(ProdutoTableView::new)
+                .collect(Collectors.toList());
+            return FXCollections.observableArrayList(plv);
+        }
+        String r = resp.readEntity(String.class);
+        System.out.println(r);
+        new Alert(Alert.AlertType.ERROR, r).show();
+        return null;
+    }
+
+    private boolean validateDateFromDatePicker(DatePicker dp) {
+        try {
+            LocalDate dateFromText = LocalDate.from(DateTimeFormatter.ofPattern("dd/MM/yyyy").parse(dp.getEditor().getText()));
+            dp.setValue(dateFromText);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

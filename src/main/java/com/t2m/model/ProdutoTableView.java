@@ -6,11 +6,11 @@ public class ProdutoTableView {
     private Integer tipoNegocio;
     private String negocio;
 
-    public ProdutoTableView(String nome, String fornecedor, Integer tipoNegocio, String negocio) {
-        this.nome = nome;
-        this.fornecedor = fornecedor;
-        this.tipoNegocio = tipoNegocio;
-        this.negocio = negocio;
+    public ProdutoTableView(Produto produto) {
+        nome = produto.getNome();
+        fornecedor = produto.getFornecedor().getNome();
+        tipoNegocio = produto.getNegocio().getTipo();
+        negocio = produto.getNegocio().getNome();
     }
 
     public String getNome() {

@@ -1,9 +1,14 @@
 package com.t2m.model;
 
-import jakarta.xml.bind.annotation.XmlElement;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Negocio {
-    @XmlElement(name = "tipoNegocio")
+
+    @JsonProperty("tipoNegocio")
     private Integer tipo;
 
     private String nome;

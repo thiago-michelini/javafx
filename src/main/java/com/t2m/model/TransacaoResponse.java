@@ -7,18 +7,19 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Produtos {
-    private List<Produto> produto;
+public class TransacaoResponse {
 
-    public Produtos() {
+    private List<Transacao> transacoes;
+
+    public TransacaoResponse() {
         super();
     }
 
-    public List<Produto> getProduto() {
-        return produto;
+    public List<Transacao> getTransacoes() {
+        return transacoes;
     }
 
-    public void setProduto(List<Produto> produto) {
-        this.produto = produto;
+    public void setTransacoes(List<Transacao> transacoes) {
+        this.transacoes = transacoes;
     }
 }

@@ -8,20 +8,31 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="611.0" prefWidth="885.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.t2m.controller.ControllerTeste">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="860.0" prefWidth="1227.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.t2m.controller.ControllerTeste">
    <children>
       <Button fx:id="btnConsultar" layoutX="179.0" layoutY="34.0" mnemonicParsing="false" onAction="#consultar" text="Consultar" />
       <ComboBox fx:id="cbConsulta" layoutX="17.0" layoutY="34.0" onAction="#exibirCamposConsultaTransacao" prefWidth="150.0" />
       <Label layoutX="17.0" layoutY="14.0" text="O que deseja consultar:" />
-      <TableView fx:id="tvProduto" layoutX="17.0" layoutY="97.0" prefHeight="509.0" prefWidth="863.0">
+      <TableView fx:id="tvProduto" layoutX="12.0" layoutY="97.0" prefHeight="755.0" prefWidth="1204.0">
         <columns>
-          <TableColumn fx:id="colNome" prefWidth="251.0" text="Nome" />
-          <TableColumn fx:id="colFornecedor" prefWidth="240.0" text="Fornecedor" />
-            <TableColumn fx:id="colTipoNegocio" prefWidth="109.0" text="Tp Negocio" />
-            <TableColumn fx:id="colNegocio" prefWidth="262.0" text="Negocio" />
+          <TableColumn fx:id="colNome" prefWidth="379.0" text="Produto" />
+          <TableColumn fx:id="colFornecedor" prefWidth="381.0" text="Fornecedor" />
+            <TableColumn fx:id="colTipoNegocio" prefWidth="103.0" text="Tp Negocio" />
+            <TableColumn fx:id="colNegocio" prefWidth="340.0" text="Negocio" />
         </columns>
       </TableView>
       <DatePicker fx:id="dpData" layoutX="57.0" layoutY="64.0" />
       <Label fx:id="lbData" layoutX="18.0" layoutY="68.0" text="Data:" />
+      <TableView fx:id="tvTransacao" layoutX="12.0" layoutY="97.0" prefHeight="755.0" prefWidth="1204.0">
+         <columns>
+            <TableColumn fx:id="colTransProduto" prefWidth="236.0" text="Produto" />
+            <TableColumn fx:id="colTransFornecedor" prefWidth="155.0" text="Fornecedor" />
+            <TableColumn fx:id="colTransIdTransacao" prefWidth="178.0" text="Id Transaçao" />
+            <TableColumn fx:id="colTransStatus" prefWidth="147.0" text="Status" />
+            <TableColumn fx:id="colTransValor" prefWidth="119.0" text="Valor (R$)" />
+            <TableColumn fx:id="colTransDtHr" prefWidth="231.0" text="Data/hora" />
+            <TableColumn fx:id="colTransNsuFornecedor" prefWidth="137.0" text="NSU Fornecedor" />
+         </columns>
+      </TableView>
    </children>
 </AnchorPane>
