@@ -29,9 +29,6 @@ public class ControllerTeste implements Initializable {
     private Button btnConsultar;
 
     @FXML
-    private ComboBox<Consulta> cbConsulta;
-
-    @FXML
     private TableView<ProdutoTableView> tvProduto;
 
     @FXML
@@ -51,6 +48,9 @@ public class ControllerTeste implements Initializable {
 
     @FXML
     private Label lbData;
+
+    @FXML
+    private Label lbMenuAtivo;
 
     @FXML
     private TableView<TransacaoTableView> tvTransacao;
@@ -76,12 +76,35 @@ public class ControllerTeste implements Initializable {
     @FXML
     private TableColumn<TransacaoTableView, Long> colTransNsuFornecedor;
 
+    @FXML
+    private Button btnMenuTransacao;
+
+    @FXML
+    private Button btnMenuProduto;
+
+    @FXML
+    private TabPane tpMenu;
+
+    @FXML
+    private Tab tiTransacao;
+
+    @FXML
+    private Tab tiProduto;
+
+    @FXML
+    private Tab tiBemVindo;
+
     private Client cInstance = ClientBuilder.newClient();
+
+    enum MenuAtivoEnum {
+        TRANSACAO, PRODUTO;
+    }
+
+    private MenuAtivoEnum menuAtivo;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        cbConsulta.setItems(getOpcoesConsulta());
-        exibirPrimeiraEsconderSegundaTableView(tvProduto, tvTransacao);
+        tpMenu.getSelectionModel().select(tiBemVindo);
 
         colTransProduto.setCellValueFactory(new PropertyValueFactory<>("produto"));
         colTransFornecedor.setCellValueFactory(new PropertyValueFactory<>("fornecedor"));
@@ -97,10 +120,9 @@ public class ControllerTeste implements Initializable {
         colTipoNegocio.setCellValueFactory(new PropertyValueFactory<>("tipoNegocio"));
         colNegocio.setCellValueFactory(new PropertyValueFactory<>("negocio"));
         desenharColunaNegocioTableProduto(colNegocio);
-
-        lbData.setVisible(false);
-        dpData.setVisible(false);
     }
+
+
 
     private void desenharColunaNegocioTableProduto(TableColumn<ProdutoTableView, String> tc) {
         tc.setCellFactory(p -> {
@@ -149,13 +171,13 @@ public class ControllerTeste implements Initializable {
                     } else {
                         setText(status);
                         if ("efetivada".equalsIgnoreCase(status))
-                            row.setStyle("-fx-background-color: green;");
+                            row.setStyle("-fx-background-color: #CEF6EC;");
                         else if ("negada".equalsIgnoreCase(status))
-                            row.setStyle("-fx-background-color: red;");
+                            row.setStyle("-fx-background-color: #F6CEE3;");
                         else if ("autorizada".equalsIgnoreCase(status))
-                            row.setStyle("-fx-background-color: yellow;");
+                            row.setStyle("-fx-background-color: #D8D8D8;");
                         else if ("cancelada".equalsIgnoreCase(status))
-                            row.setStyle("-fx-background-color: orange;");
+                            row.setStyle("-fx-background-color: #F5F6CE;");
                         else
                             row.setStyle(null);
                     }
@@ -164,35 +186,34 @@ public class ControllerTeste implements Initializable {
         });
     }
 
-    private void exibirPrimeiraEsconderSegundaTableView(TableView<?> primeiraTV, TableView<?> segundaTV) {
-        primeiraTV.setVisible(true);
-        segundaTV.setVisible(false);
+    @FXML
+    void ativarMenuTransacao(ActionEvent event) {
+        menuAtivo = MenuAtivoEnum.TRANSACAO;
+        lbMenuAtivo.setText("Área de Transações");
+        tpMenu.getSelectionModel().select(tiTransacao);
     }
 
     @FXML
-    void exibirCamposConsultaTransacao() {
-        Consulta opCons = cbConsulta.getSelectionModel().getSelectedItem();
-        if (null != opCons && opCons.getTipo() == 2) {
-            lbData.setVisible(true);
-            dpData.setVisible(true);
-        } else {
-            lbData.setVisible(false);
-            dpData.setVisible(false);
-        }
+    void ativarMenuProduto(ActionEvent event) {
+        menuAtivo = MenuAtivoEnum.PRODUTO;
+        lbMenuAtivo.setText("Área de Produtos");
+        consultar(null);
+        tpMenu.getSelectionModel().select(tiProduto);
     }
 
     @FXML
     void consultar(ActionEvent event) {
         System.out.println("está funfando!!");
-        Consulta opCons = cbConsulta.getSelectionModel().getSelectedItem();
-        if (null != opCons && opCons.getTipo() > 0) {
-            if (opCons.getTipo() == 2 && "".equals(dpData.getEditor().getText())) {
+//        Consulta opCons = cbConsulta.getSelectionModel().getSelectedItem();
+//        if (null != opCons && opCons.getTipo() > 0) {
+//            if (opCons.getTipo() == 2 && "".equals(dpData.getEditor().getText())) {
+            if (MenuAtivoEnum.TRANSACAO.equals(menuAtivo) && "".equals(dpData.getEditor().getText())) {
                 Alert a = new Alert(Alert.AlertType.INFORMATION);
                 a.setHeaderText("A data deve ser informada!");
                 a.show();
                 return;
             }
-            if (opCons.getTipo() == 2 && !validateDateFromDatePicker(dpData)) {
+            if (MenuAtivoEnum.TRANSACAO.equals(menuAtivo) && !validateDateFromDatePicker(dpData)) {
                 Alert a = new Alert(Alert.AlertType.WARNING);
                 a.setHeaderText("A data informada é inválida!");
                 a.show();
@@ -201,20 +222,19 @@ public class ControllerTeste implements Initializable {
 
             try {
                 String auth = Base64.getEncoder().encodeToString("75862116000139:75862116000139".getBytes());
-                if (opCons.getTipo() == 1) {
+//                if (opCons.getTipo() == 1) {
+                if (MenuAtivoEnum.PRODUTO.equals(menuAtivo)) {
                     ObservableList<ProdutoTableView> produtoTV = invocarProdutoAPI(auth);
                     tvProduto.setItems(produtoTV);
-                    exibirPrimeiraEsconderSegundaTableView(tvProduto, tvTransacao);
                 } else {
                     ObservableList<TransacaoTableView> transacaoTV = invocarTransacaoAPI(auth);
                     tvTransacao.setItems(transacaoTV);
-                    exibirPrimeiraEsconderSegundaTableView(tvTransacao, tvProduto);
                 }
             } catch (Exception e) {
                 System.err.println("catch deu erro!!!");
                 e.printStackTrace();
             }
-        }
+//        }
     }
 
     private ObservableList<TransacaoTableView> invocarTransacaoAPI(String auth) {
@@ -271,8 +291,4 @@ public class ControllerTeste implements Initializable {
         }
     }
 
-    private ObservableList<Consulta> getOpcoesConsulta() {
-        List<Consulta> op = Arrays.asList(new Consulta(0, ""),  new Consulta(1, "Produtos"), new Consulta(2, "Transações"));
-        return FXCollections.observableArrayList(op);
-    }
 }
