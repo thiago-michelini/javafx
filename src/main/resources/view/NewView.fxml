@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.t2m.controller.ControllerTeste">
+   <children>
+      <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" styleClass="cabecalho" stylesheets="@../css/style.css">
+         <children>
+            <Label text="Market">
+               <font>
+                  <Font size="35.0" />
+               </font>
+               <textFill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.6901960968971252" green="0.8274509906768799" blue="0.6941176652908325" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </textFill>
+            </Label>
+            <Label text="Plus" textFill="#ed8b05">
+               <padding>
+                  <Insets bottom="13.0" left="4.0" />
+               </padding>
+               <font>
+                  <Font name="Liberation Serif Bold Italic" size="20.0" />
+               </font>
+            </Label>
+         </children></HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="160.0">
+               <children>
+                  <VBox alignment="TOP_CENTER" prefWidth="100.0">
+                     <children>
+                        <Button fx:id="btnMenuTransacao" mnemonicParsing="false" onAction="#ativarMenuTransacao" prefHeight="97.0" prefWidth="110.0" text="Transação" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets top="20.0" />
+                     </padding>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefWidth="100.0">
+                     <children>
+                        <Button fx:id="btnMenuProduto" mnemonicParsing="false" onAction="#ativarMenuProduto" prefHeight="97.0" prefWidth="110.0" text="Produto" />
+                     </children>
+                     <padding>
+                        <Insets top="25.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: red;" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: white;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <TabPane fx:id="tpMenu" layoutX="14.0" layoutY="17.0" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="13.0">
+                                <tabs>
+                                    <Tab fx:id="tiBemVindo" text="Untitled Tab">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox alignment="CENTER" layoutX="166.0" layoutY="194.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <Label alignment="CENTER" text="Bem vindo ao Market Plus!!!" textFill="#ce49eb">
+                                                         <font>
+                                                            <Font size="30.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </Tab>
+                                    <Tab fx:id="tiProduto" text="Untitled Tab">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <TableView fx:id="tvProduto" layoutX="130.0" layoutY="189.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <columns>
+                                                    <TableColumn fx:id="colNome" prefWidth="406.0" text="Produto" />
+                                                    <TableColumn fx:id="colFornecedor" prefWidth="382.0" text="Fornecedor" />
+                                                      <TableColumn fx:id="colTipoNegocio" prefWidth="99.0" text="Tp Negocio" />
+                                                      <TableColumn fx:id="colNegocio" prefWidth="224.0" text="Negocio" />
+                                                  </columns>
+                                                </TableView>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </Tab>
+                                    <Tab fx:id="tiTransacao" text="Untitled Tab">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                             <children>
+                                                <HBox layoutX="14.0" layoutY="14.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="622.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <Label text="Data:">
+                                                         <padding>
+                                                            <Insets right="5.0" top="5.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <DatePicker fx:id="dpData">
+                                                         <HBox.margin>
+                                                            <Insets right="7.0" />
+                                                         </HBox.margin>
+                                                      </DatePicker>
+                                                      <Button fx:id="btnConsultar" mnemonicParsing="false" onAction="#consultar" text="Consultar" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets top="5.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <HBox layoutX="181.0" layoutY="36.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                                                   <children>
+                                                      <TableView fx:id="tvTransacao" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                                                        <columns>
+                                                          <TableColumn fx:id="colTransProduto" prefWidth="199.0" text="Produto" />
+                                                          <TableColumn fx:id="colTransFornecedor" prefWidth="176.0" text="Fornecedor" />
+                                                            <TableColumn fx:id="colTransIdTransacao" prefWidth="169.0" text="Id Transaçao" />
+                                                            <TableColumn fx:id="colTransStatus" prefWidth="127.0" text="Status" />
+                                                            <TableColumn fx:id="colTransValor" prefWidth="115.0" text="Valor (R$)" />
+                                                            <TableColumn fx:id="colTransDtHr" prefWidth="192.0" text="Data/hora" />
+                                                            <TableColumn fx:id="colTransNsuFornecedor" prefWidth="133.0" text="NSU Fornecedor" />
+                                                        </columns>
+                                                      </TableView>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </Tab>
+                                </tabs>
+                              </TabPane>
+                              <HBox alignment="CENTER" prefHeight="47.0" prefWidth="200.0" style="-fx-background-color: white;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #086A87; -fx-background-radius: 12; -fx-opacity: 0.5;" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </HBox.margin>
+                                       <children>
+                                          <Label fx:id="lbMenuAtivo" text="Boas Vindas" textFill="WHITE">
+                                             <font>
+                                                <Font name="Ubuntu Mono Bold Italic" size="24.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>
